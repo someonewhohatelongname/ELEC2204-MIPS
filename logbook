@@ -1,0 +1,19 @@
+mips_sim/
+├── __main__.py             # Main entry point
+├── simulator.py            # Main simulation loop
+├── instruction_set.py[done]      # Instruction definitions 
+├── instruction_parser.py[done]   # Converts text to Instruction objects 
+├── memory.py[done]               # Instruction + data memory
+├── register_file.py[done]        # MIPS register file
+├── logger.py               # Cycle-by-cycle dump
+├── pipeline_registers.py[done]   # IF/ID, ID/EX, etc.
+├── hazard_unit.py          # Stalls & forwarding
+├── stages/
+│   ├── __init__.py
+│   ├── if_stage.py
+│   ├── id_stage.py
+│   ├── ex_stage.py
+│   ├── mem_stage.py
+│   ├── wb_stage.py
+└── test/
+    └── test_suite.py       # Unit tests (optional but encouraged)

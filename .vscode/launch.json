@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug MIPS Simulator",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "console": "integratedTerminal",
+      "args": ["/Users/limkaishan/Library/Mobile Documents/com~apple~CloudDocs/UOSM/EEE/Year 2/ELEC2204-MIPS/examples/simple_program.asm",
+      "--verbose"]  // if you want to pass CLI args
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+===== Cycle 1 =====
+
+Pipeline Stages:
+  IF:
+    pc: 4
+  ID:
+    instruction: addi $t0, $zero, 0
+  EX:
+    control: {'is_nop': True}
+    rs_val: {}
+    rt_val: {}
+  MEM:
+    control: {'is_nop': True}
+    alu_result: {}
+  WB:
+    control: {'is_nop': True}
+    dest_reg: {}
+
+Registers:
+
+Memory:
+  0: addi $t0, $zero, 0
+  4: addi $t1, $zero, 1
+  8: addi $t2, $zero, 10
+  12: add $t0, $t0, $t1
+  16: addi $t1, $t1, 1
+  20: sub $t3, $t2, $t1
+  24: or $t3, $t3, $zero
+  28: addi $t4, $zero, 100
+  32: sw $t0, 0($t4)
+  36: lw $t5, 0($t4)
+==============================

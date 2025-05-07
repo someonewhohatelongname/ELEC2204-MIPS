@@ -13,8 +13,10 @@ def load_assembly_program(file_path):
     Returns:
         list: List of (address, instruction) tuples
     """
+    from memory import Memory  # Import to access memory constants
+    
     program = []
-    address = 0
+    address = Memory.INSTR_START  # Start at the beginning of instruction memory
     
     with open(file_path, 'r') as f:
         for line in f:
@@ -24,6 +26,13 @@ def load_assembly_program(file_path):
                 # Store at current address
                 program.append((address, line))
                 address += 4  # Instructions are word-aligned
+                
+                # Check if we've exceeded instruction memory
+                if address > Memory.INSTR_END:
+                    print(f"Warning: Program exceeds instruction memory limit at {hex(address)}")
+                    # We could either wrap around or truncate here
+                    # For safety, we'll truncate
+                    break
                 
     return program
 
@@ -37,6 +46,8 @@ def parse_initial_data(file_path):
     Returns:
         list: List of (address, value) tuples
     """
+    from memory import Memory  # Import to access memory constants
+    
     data = []
     
     with open(file_path, 'r') as f:
@@ -48,8 +59,25 @@ def parse_initial_data(file_path):
                 parts = line.split(':')
                 if len(parts) == 2:
                     try:
-                        address = int(parts[0].strip())
-                        value = int(parts[1].strip())
+                        # Try to parse as hex if it starts with 0x
+                        if parts[0].strip().lower().startswith("0x"):
+                            address = int(parts[0].strip(), 16)
+                        else:
+                            address = int(parts[0].strip())
+                            
+                        # Similarly for value
+                        if parts[1].strip().lower().startswith("0x"):
+                            value = int(parts[1].strip(), 16)
+                        else:
+                            value = int(parts[1].strip())
+                            
+                        # Check if address is in data memory range
+                        if not (Memory.DATA_START <= address <= Memory.DATA_END):
+                            adjusted_address = Memory.DATA_START + (address % (Memory.DATA_END - Memory.DATA_START + 1))
+                            print(f"Warning: Address {hex(address)} is outside data memory. "
+                                f"Adjusted to {hex(adjusted_address)}.")
+                            address = adjusted_address
+                            
                         data.append((address, value))
                     except ValueError:
                         print(f"Warning: Invalid data format: {line}")

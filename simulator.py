@@ -49,22 +49,40 @@ class Simulator:
             
     def load_program(self, program):
         """
-        Load program instructions into memory.
+        Load program instructions into instruction memory.
         
         Args:
             program (list): List of (address, instruction) tuples
         """
         for address, instruction in program:
+            # Validate address is in instruction memory region
+            if not self.memory.is_instruction_memory(address):
+                # Adjust address to be within instruction memory if needed
+                adjusted_address = address % self.memory.MEM_SIZE
+                if adjusted_address > self.memory.INSTR_END:
+                    adjusted_address = address % (self.memory.INSTR_END + 1)
+                print(f"Warning: Address {hex(address)} is outside instruction memory. "
+                    f"Adjusted to {hex(adjusted_address)}.")
+                address = adjusted_address
+                
             self.memory.store(address, instruction)
             
     def load_data(self, data):
         """
-        Load data into memory.
+        Load data into data memory.
         
         Args:
             data (list): List of (address, value) tuples
         """
         for address, value in data:
+            # Validate address is in data memory region
+            if not self.memory.is_data_memory(address):
+                # Adjust address to be within data memory
+                adjusted_address = self.memory.DATA_START + (address % (self.memory.DATA_END - self.memory.DATA_START + 1))
+                print(f"Warning: Address {hex(address)} is outside data memory. "
+                    f"Adjusted to {hex(adjusted_address)}.")
+                address = adjusted_address
+                
             self.memory.store(address, value)
             
     def run(self, verbose=False):

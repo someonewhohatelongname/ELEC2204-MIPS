@@ -37,37 +37,28 @@ class HazardUnit:
             self.mem_forwarding_reg = reg_name
             self.mem_forwarding_value = value
         
-    def forward_a(self, original_value):
-        """Forward value A (rs) if needed"""
-        rs_name = self.id_ex_reg.read("rs_name")
-        if not rs_name or not isinstance(rs_name, str):
+    def _forward_value(self, reg_name, original_value):
+        """Generic forwarding logic for both rs and rt"""
+        if not reg_name or not isinstance(reg_name, str):
             return original_value
             
         # Forward from MEM stage (priority over EX)
-        if self.mem_forwarding_reg == rs_name:
+        if self.mem_forwarding_reg == reg_name:
             return self.mem_forwarding_value
             
         # Forward from EX stage
-        if self.ex_forwarding_reg == rs_name:
+        if self.ex_forwarding_reg == reg_name:
             return self.ex_forwarding_value
             
         return original_value
         
+    def forward_a(self, original_value):
+        """Forward value A (rs) if needed"""
+        return self._forward_value(self.id_ex_reg.read("rs_name"), original_value)
+        
     def forward_b(self, original_value):
         """Forward value B (rt) if needed"""
-        rt_name = self.id_ex_reg.read("rt_name")
-        if not rt_name or not isinstance(rt_name, str):
-            return original_value
-            
-        # Forward from MEM stage (priority over EX)
-        if self.mem_forwarding_reg == rt_name:
-            return self.mem_forwarding_value
-            
-        # Forward from EX stage
-        if self.ex_forwarding_reg == rt_name:
-            return self.ex_forwarding_value
-            
-        return original_value
+        return self._forward_value(self.id_ex_reg.read("rt_name"), original_value)
         
     def detect_data_hazards(self):
         """Detect data hazards that require stalling"""

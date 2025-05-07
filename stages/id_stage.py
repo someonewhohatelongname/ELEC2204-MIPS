@@ -24,9 +24,13 @@ class IDStage:
         # Get instruction from IF/ID register
         instruction = self.if_id_reg.read("instruction")
         pc = self.if_id_reg.read("pc")
+        is_nop = self.if_id_reg.read("is_nop")
         
-        # No instruction to decode
-        if not instruction:
+        # Check if end of program reached
+        if is_nop or not instruction:
+            self.id_ex_reg.clear()
+            self.id_ex_reg.write("instruction", instruction)
+            self.id_ex_reg.write("pc", pc)
             self.id_ex_reg.write("control_signals", {"is_nop": True})
             return
             

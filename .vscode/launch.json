@@ -8,6 +8,7 @@
       "program": "${workspaceFolder}/main.py",
       "console": "integratedTerminal",
       "args": ["/Users/limkaishan/Library/Mobile Documents/com~apple~CloudDocs/UOSM/EEE/Year 2/ELEC2204-MIPS/examples/simple_program.asm",
+      "--static-data", "/Users/limkaishan/Library/Mobile Documents/com~apple~CloudDocs/UOSM/EEE/Year 2/ELEC2204-MIPS/examples/sample_data.txt",
       "--verbose"]  // if you want to pass CLI args
     }
   ]

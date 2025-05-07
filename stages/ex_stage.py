@@ -13,8 +13,10 @@ class EXStage:
         # Read control signals from ID/EX register
         control_signals = self.id_ex_reg.read("control_signals")
         
-        # If it's a NOP instruction, propagate it
-        if control_signals.get("is_nop", True):
+        # If it's a NOP instruction or invalid control signals, propagate NOP
+        if not control_signals or control_signals.get("is_nop", True):
+            self.ex_mem_reg.clear()
+            self.ex_mem_reg.write("instruction", None)
             self.ex_mem_reg.write("control_signals", {"is_nop": True})
             return
             
@@ -58,6 +60,13 @@ class EXStage:
         self.ex_mem_reg.write("control_signals", control_signals)
         self.ex_mem_reg.write("pc", pc)
         self.ex_mem_reg.write("instruction", instruction)  # Pass instruction for logging
+        
+        # Forward register names for debugging
+        if rs_name:
+            self.ex_mem_reg.write("rs_name", rs_name)
+            self.ex_mem_reg.write("rs_val", rs_val)
+        if rt_name:
+            self.ex_mem_reg.write("rt_name", rt_name)
         
         # Update hazard unit for forwarding
         if dest_reg and control_signals.get("reg_write", False):

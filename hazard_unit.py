@@ -92,8 +92,8 @@ class HazardUnit:
                         pass
                         
                 # Check if ID stage uses this register (fallback method)
-                if dest_reg == self.id_reg_target:
-                    return True
+                # if dest_reg == self.id_reg_target:
+                #     return True
         return False
 
     def stall_if(self):

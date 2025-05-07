@@ -12,6 +12,7 @@ class MEMStage:
         """
         # Read control signals from EX/MEM register
         control_signals = self.ex_mem_reg.read("control_signals")
+        instruction = self.ex_mem_reg.read("instruction")
         
         # Check if control_signals is a dictionary
         if not isinstance(control_signals, dict):
@@ -28,6 +29,11 @@ class MEMStage:
         rt_val = self.ex_mem_reg.read("rt_val")
         dest_reg = self.ex_mem_reg.read("dest_reg")
         pc = self.ex_mem_reg.read("pc")
+        
+        # Get register names
+        rs_name = self.ex_mem_reg.read("rs_name")
+        rs_val = self.ex_mem_reg.read("rs_val")
+        rt_name = self.ex_mem_reg.read("rt_name")
         
         # Initialize memory data (for loads)
         mem_data = 0
@@ -48,11 +54,20 @@ class MEMStage:
                 print(f"Memory write error at address {alu_result}: {e}")
         
         # Update MEM/WB pipeline register
+        self.mem_wb_reg.write("instruction", instruction)  # Propagate instruction
         self.mem_wb_reg.write("alu_result", alu_result)
         self.mem_wb_reg.write("mem_data", mem_data)
         self.mem_wb_reg.write("dest_reg", dest_reg)
         self.mem_wb_reg.write("control_signals", control_signals)
         self.mem_wb_reg.write("pc", pc)
+        
+        # Propagate register names and values
+        if rs_name:
+            self.mem_wb_reg.write("rs_name", rs_name)
+            self.mem_wb_reg.write("rs_val", rs_val)
+        if rt_name:
+            self.mem_wb_reg.write("rt_name", rt_name)
+            self.mem_wb_reg.write("rt_val", rt_val)
         
         # Update hazard unit for forwarding
         if dest_reg and control_signals.get("reg_write", False):

@@ -37,7 +37,19 @@ def parse_instruction(instruction):
     # Special handling for memory operations (lw, sw)
     if opcode in ["lw", "sw"] and len(parts) >= 3:
         operands["rt"] = parts[1]
-        operands["imm(rs)"] = parts[2]
+        
+        # Parse the address part (e.g., "0($t4)")
+        addr_part = parts[2]
+        operands["imm(rs)"] = addr_part
+        
+        # Try to extract immediate and register parts
+        if "(" in addr_part and ")" in addr_part:
+            imm_part = addr_part.split("(")[0].strip()
+            reg_part = addr_part.split("(")[1].rstrip(")").strip()
+            
+            if imm_part:
+                operands["imm"] = imm_part
+            operands["rs"] = reg_part
     else:
         # Standard parsing for other instructions
         for i, operand in enumerate(parts[1:]):

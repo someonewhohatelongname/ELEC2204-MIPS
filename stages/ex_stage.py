@@ -24,6 +24,7 @@ class EXStage:
         imm_val = self.id_ex_reg.read("imm_val")
         dest_reg = self.id_ex_reg.read("dest_reg")
         pc = self.id_ex_reg.read("pc")
+        instruction = self.id_ex_reg.read("instruction")
         
         # Get register names if available
         rs_name = self.id_ex_reg.read("rs_name")
@@ -56,6 +57,7 @@ class EXStage:
         self.ex_mem_reg.write("dest_reg", dest_reg)
         self.ex_mem_reg.write("control_signals", control_signals)
         self.ex_mem_reg.write("pc", pc)
+        self.ex_mem_reg.write("instruction", instruction)  # Pass instruction for logging
         
         # Update hazard unit for forwarding
         if dest_reg and control_signals.get("reg_write", False):

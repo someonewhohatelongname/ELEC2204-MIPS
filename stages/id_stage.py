@@ -39,9 +39,11 @@ class IDStage:
             return
             
         # Extract register values
-        rs_val = 0
-        rt_val = 0
+        rs_val = None
+        rt_val = None
         imm_val = 0
+        rs_name = None
+        rt_name = None
         
         # Set up control signals
         control_signals = {
@@ -58,9 +60,11 @@ class IDStage:
         if instr_type == 'R':
             # For R-type instructions, use rd as destination register
             if 'rs' in operands:
-                rs_val = self.register_file.read(operands['rs'])
+                rs_name = operands['rs']
+                rs_val = self.register_file.read(rs_name)
             if 'rt' in operands:
-                rt_val = self.register_file.read(operands['rt'])
+                rt_name = operands['rt']
+                rt_val = self.register_file.read(rt_name)
             
             # Destination register for writeback
             dest_reg = operands.get('rd', None)
@@ -68,13 +72,17 @@ class IDStage:
         elif instr_type == 'I':
             # Handle immediate instructions
             if 'rs' in operands:
-                rs_val = self.register_file.read(operands['rs'])
+                rs_name = operands['rs']
+                rs_val = self.register_file.read(rs_name)
                 
             # For I-type instructions like addi, use rd as destination
             if opcode == "addi":
                 dest_reg = operands.get('rd', None)
             else:
                 # For other I-type instructions, typically use rt as destination
+                if 'rt' in operands:
+                    rt_name = operands['rt']
+                    rt_val = self.register_file.read(rt_name)
                 dest_reg = operands.get('rt', None)
                 
             # Parse immediate value
@@ -104,6 +112,7 @@ class IDStage:
             self.hazard_unit.set_id_reg_target(dest_reg)
         
         # Update ID/EX pipeline register
+        self.id_ex_reg.write("instruction", instruction)  # Propagate instruction text
         self.id_ex_reg.write("rs_val", rs_val)
         self.id_ex_reg.write("rt_val", rt_val)
         self.id_ex_reg.write("imm_val", imm_val)
@@ -112,10 +121,10 @@ class IDStage:
         self.id_ex_reg.write("pc", pc)
         
         # Pass register names for forwarding
-        if 'rs' in operands:
-            self.id_ex_reg.write("rs_name", operands['rs'])
-        if 'rt' in operands:
-            self.id_ex_reg.write("rt_name", operands['rt'])
+        if rs_name:
+            self.id_ex_reg.write("rs_name", rs_name)
+        if rt_name:
+            self.id_ex_reg.write("rt_name", rt_name)
     
     def _get_alu_op(self, opcode):
         """

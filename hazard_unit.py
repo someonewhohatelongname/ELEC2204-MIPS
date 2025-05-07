@@ -1,3 +1,4 @@
+from instruction_parser import parse_instruction
 class HazardUnit:
     def __init__(self, register_file, if_id_reg, id_ex_reg, ex_mem_reg, mem_wb_reg):
         self.register_file = register_file
@@ -26,18 +27,20 @@ class HazardUnit:
         
     def set_ex_reg_target(self, reg_name, value):
         """Set the target register and value for forwarding from EX stage"""
-        self.ex_forwarding_reg = reg_name
-        self.ex_forwarding_value = value
+        if reg_name and isinstance(reg_name, str):
+            self.ex_forwarding_reg = reg_name
+            self.ex_forwarding_value = value
         
     def set_mem_reg_target(self, reg_name, value):
         """Set the target register and value for forwarding from MEM stage"""
-        self.mem_forwarding_reg = reg_name
-        self.mem_forwarding_value = value
+        if reg_name and isinstance(reg_name, str):
+            self.mem_forwarding_reg = reg_name
+            self.mem_forwarding_value = value
         
     def forward_a(self, original_value):
         """Forward value A (rs) if needed"""
         rs_name = self.id_ex_reg.read("rs_name")
-        if not rs_name:
+        if not rs_name or not isinstance(rs_name, str):
             return original_value
             
         # Forward from MEM stage (priority over EX)
@@ -53,7 +56,7 @@ class HazardUnit:
     def forward_b(self, original_value):
         """Forward value B (rt) if needed"""
         rt_name = self.id_ex_reg.read("rt_name")
-        if not rt_name:
+        if not rt_name or not isinstance(rt_name, str):
             return original_value
             
         # Forward from MEM stage (priority over EX)
@@ -70,12 +73,29 @@ class HazardUnit:
         """Detect data hazards that require stalling"""
         control_signals = self.id_ex_reg.read("control_signals")
         
+        # If control_signals is not a dictionary, there's no instruction in EX stage
+        if not isinstance(control_signals, dict):
+            return False
+        
         # If a load instruction is in EX stage and its destination is used in ID stage,
         # we need to stall for one cycle (load-use hazard)
         if control_signals.get("mem_read", False):
             dest_reg = self.id_ex_reg.read("dest_reg")
-            if dest_reg:
-                # Check if ID stage uses this register
+            if dest_reg and isinstance(dest_reg, str):
+                # Get potential source registers from ID stage
+                if_id_instr = self.if_id_reg.read("instruction")
+                if if_id_instr and isinstance(if_id_instr, str):
+                    try:
+                        opcode, instr_type, operands = parse_instruction(if_id_instr)
+                        
+                        # Check if ID stage uses this register as a source
+                        for reg_field, reg_name in operands.items():
+                            if reg_field in ['rs', 'rt'] and reg_name == dest_reg:
+                                return True
+                    except (ValueError, TypeError, AttributeError):
+                        pass
+                        
+                # Check if ID stage uses this register (fallback method)
                 if dest_reg == self.id_reg_target:
                     return True
         return False

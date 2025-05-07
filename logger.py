@@ -48,8 +48,21 @@ class Logger:
         self._log("\nPipeline Stages:")
         for stage, data in cycle_log["stages"].items():
             self._log(f"  {stage}:")
+            
+            # Print instruction for each stage if available
+            if "instruction" in data:
+                self._log(f"    Instruction: {data['instruction']}")
+                
+            # Special handling for register values to show names and values
+            if "rs_name" in data and "rs_val" in data:
+                self._log(f"    RS: {data['rs_name']} = {data['rs_val']}")
+            if "rt_name" in data and "rt_val" in data:
+                self._log(f"    RT: {data['rt_name']} = {data['rt_val']}")
+                
+            # Print other stage data
             for key, value in data.items():
-                self._log(f"    {key}: {value}")
+                if key not in ["instruction", "rs_name", "rs_val", "rt_name", "rt_val"]:
+                    self._log(f"    {key}: {value}")
 
         self._log("\nRegisters:")
         for reg, value in cycle_log["registers"].items():

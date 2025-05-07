@@ -8,6 +8,7 @@ from stages.ex_stage import EXStage
 from stages.mem_stage import MEMStage
 from stages.wb_stage import WBStage
 from logger import Logger
+from instruction_parser import parse_instruction
 
 class Simulator:
     def __init__(self, program=None, data=None, max_cycles=1000):
@@ -118,18 +119,36 @@ class Simulator:
     def log_state(self):
         """Log the current state of the pipeline."""
         # Log pipeline stages
-        if_stage_data = {"pc": self.if_stage.pc}
-        id_stage_data = {"instruction": self.if_id_reg.read("instruction")}
+        if_stage_data = {
+            "pc": self.if_stage.pc,
+            "instruction": self.memory.load(self.if_stage.pc)
+        }
+        
+        id_instr = self.if_id_reg.read("instruction")
+        id_stage_data = {
+            "instruction": id_instr
+        }
+        
+        # Get register names from ID/EX for EX stage
+        rs_name = self.id_ex_reg.read("rs_name")
+        rt_name = self.id_ex_reg.read("rt_name")
         ex_stage_data = {
+            "instruction": self.id_ex_reg.read("instruction"),
             "control": self.id_ex_reg.read("control_signals"),
+            "rs_name": rs_name,
             "rs_val": self.id_ex_reg.read("rs_val"),
+            "rt_name": rt_name,
             "rt_val": self.id_ex_reg.read("rt_val")
         }
+        
         mem_stage_data = {
+            "instruction": self.ex_mem_reg.read("instruction"),
             "control": self.ex_mem_reg.read("control_signals"),
             "alu_result": self.ex_mem_reg.read("alu_result")
         }
+        
         wb_stage_data = {
+            "instruction": self.mem_wb_reg.read("instruction"),
             "control": self.mem_wb_reg.read("control_signals"),
             "dest_reg": self.mem_wb_reg.read("dest_reg")
         }

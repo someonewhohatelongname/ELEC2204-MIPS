@@ -189,7 +189,8 @@ class Simulator:
             "rs_name": rs_name,
             "rs_val": self.id_ex_reg.read("rs_val"),
             "rt_name": rt_name,
-            "rt_val": self.id_ex_reg.read("rt_val")
+            "rt_val": self.id_ex_reg.read("rt_val"),
+            "binary_data": self.id_ex_reg.read("binary_data")
         }
         
         mem_stage_data = {

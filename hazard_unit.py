@@ -77,12 +77,17 @@ class HazardUnit:
                 if_id_instr = self.if_id_reg.read("instruction")
                 if if_id_instr and isinstance(if_id_instr, str):
                     try:
-                        opcode, instr_type, operands = parse_instruction(if_id_instr)
-                        
-                        # Check if ID stage uses this register as a source
-                        for reg_field, reg_name in operands.items():
-                            if reg_field in ['rs', 'rt'] and reg_name == dest_reg:
-                                return True
+                        # UPDATED: Use new instruction parser return format
+                        instr_data = parse_instruction(if_id_instr)
+                        if instr_data:
+                            opcode = instr_data['opcode']
+                            instr_type = instr_data['type']
+                            operands = instr_data['operands']
+                            
+                            # Check if ID stage uses this register as a source
+                            for reg_field, reg_name in operands.items():
+                                if reg_field in ['rs', 'rt'] and reg_name == dest_reg:
+                                    return True
                     except (ValueError, TypeError, AttributeError):
                         pass
                         
@@ -90,7 +95,7 @@ class HazardUnit:
                 if dest_reg == self.id_reg_target:
                     return True
         return False
-        
+
     def stall_if(self):
         """Check if IF stage should be stalled"""
         return self.stall_pipeline or self.detect_data_hazards()

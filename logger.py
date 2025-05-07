@@ -52,7 +52,17 @@ class Logger:
             # Print instruction for each stage if available
             if "instruction" in data:
                 self._log(f"    Instruction: {data['instruction']}")
+
+            if "binary_data" in data and data["binary_data"]:
+                binary_data = data["binary_data"]
+                self._log(f"    Binary: {binary_data.get('binary', 'N/A')}")
                 
+                # Print binary fields according to instruction type
+                if "fields" in binary_data:
+                    self._log(f"    Binary Fields:")
+                    for field_name, field_value in binary_data["fields"].items():
+                        self._log(f"      {field_name}: {field_value}")
+
             # Special handling for register values to show names and values
             if "rs_name" in data and "rs_val" in data:
                 self._log(f"    RS: {data['rs_name']} = {data['rs_val']}")
@@ -61,7 +71,7 @@ class Logger:
                 
             # Print other stage data
             for key, value in data.items():
-                if key not in ["instruction", "rs_name", "rs_val", "rt_name", "rt_val"]:
+                if key not in ["instruction", "rs_name", "rs_val", "rt_name", "rt_val", "binary_data"]:
                     self._log(f"    {key}: {value}")
 
         self._log("\nRegisters:")
@@ -138,3 +148,4 @@ class Logger:
             self._log("  STACK SEGMENT:")
             for addr, value in stack_segment.items():
                 self._log(f"    {addr}: {value}")
+        self._log("=" * 30)

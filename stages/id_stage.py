@@ -32,7 +32,17 @@ class IDStage:
             
         # Parse instruction
         try:
-            opcode, instr_type, operands = parse_instruction(instruction)
+            # UPDATED: Use new instruction parser return format
+            instr_data = parse_instruction(instruction)
+            if not instr_data:
+                self.id_ex_reg.write("control_signals", {"is_nop": True})
+                return
+                
+            opcode = instr_data['opcode']
+            instr_type = instr_data['type']
+            operands = instr_data['operands']
+            binary_data = instr_data['binary']
+            
         except (ValueError, TypeError):
             # Invalid instruction, treat as NOP
             self.id_ex_reg.write("control_signals", {"is_nop": True})
@@ -125,6 +135,9 @@ class IDStage:
             self.id_ex_reg.write("rs_name", rs_name)
         if rt_name:
             self.id_ex_reg.write("rt_name", rt_name)
+            
+        # NEW: Store binary representation
+        self.id_ex_reg.write("binary_data", binary_data)
     
     def _get_alu_op(self, opcode):
         """

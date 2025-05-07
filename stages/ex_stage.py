@@ -1,8 +1,9 @@
 class EXStage:
-    def __init__(self, id_ex_reg, ex_mem_reg, hazard_unit):
+    def __init__(self, id_ex_reg, ex_mem_reg, hazard_unit, register_file):
         self.id_ex_reg = id_ex_reg
         self.ex_mem_reg = ex_mem_reg
         self.hazard_unit = hazard_unit
+        self.register_file = register_file  # Add register file to access register values
 
     def execute(self):
         """
@@ -13,7 +14,7 @@ class EXStage:
         control_signals = self.id_ex_reg.read("control_signals")
         
         # If it's a NOP instruction, propagate it
-        if not isinstance(control_signals, dict) or control_signals.get("is_nop", True):
+        if control_signals.get("is_nop", True):
             self.ex_mem_reg.write("control_signals", {"is_nop": True})
             return
             
@@ -23,6 +24,23 @@ class EXStage:
         imm_val = self.id_ex_reg.read("imm_val")
         dest_reg = self.id_ex_reg.read("dest_reg")
         pc = self.id_ex_reg.read("pc")
+        
+        # Get register names if available
+        rs_name = self.id_ex_reg.read("rs_name")
+        rt_name = self.id_ex_reg.read("rt_name")
+        
+        # If we have register names but no values, look up the values
+        if rs_name and not rs_val and isinstance(rs_name, str):
+            try:
+                rs_val = self.register_file.read(rs_name)
+            except ValueError:
+                rs_val = 0
+                
+        if rt_name and not rt_val and isinstance(rt_name, str):
+            try:
+                rt_val = self.register_file.read(rt_name)
+            except ValueError:
+                rt_val = 0
         
         # Apply forwarding if necessary
         rs_val = self.hazard_unit.forward_a(rs_val)
@@ -47,6 +65,17 @@ class EXStage:
         """
         Execute the ALU operation.
         """
+        # Ensure operands are integers
+        try:
+            rs_val = int(rs_val) if rs_val is not None else 0
+            rt_val = int(rt_val) if rt_val is not None else 0
+            imm_val = int(imm_val) if imm_val is not None else 0
+        except (ValueError, TypeError):
+            # If conversion fails, use default values
+            rs_val = 0
+            rt_val = 0
+            imm_val = 0
+            
         if alu_op == "ADD":
             # For load/store, add immediate value to base register
             if self.id_ex_reg.read("control_signals").get("mem_read") or \

@@ -35,7 +35,8 @@ class Simulator:
         # Initialize pipeline stages
         self.if_stage = IFStage(self.memory, self.if_id_reg, self.hazard_unit)
         self.id_stage = IDStage(self.register_file, self.if_id_reg, self.id_ex_reg, self.hazard_unit)
-        self.ex_stage = EXStage(self.id_ex_reg, self.ex_mem_reg, self.hazard_unit)
+        # Pass register_file to EXStage
+        self.ex_stage = EXStage(self.id_ex_reg, self.ex_mem_reg, self.hazard_unit, self.register_file)
         self.mem_stage = MEMStage(self.memory, self.ex_mem_reg, self.mem_wb_reg, self.hazard_unit)
         self.wb_stage = WBStage(self.register_file, self.mem_wb_reg)
         

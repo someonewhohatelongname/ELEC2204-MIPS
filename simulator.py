@@ -71,21 +71,52 @@ class Simulator:
             
     def load_data(self, data):
         """
-        Load data into static data segment.
+        Load data into memory, respecting segment boundaries.
         
         Args:
             data (list): List of (address, value) tuples
         """
         for address, value in data:
-            # By default, load data into static segment
-            if not self.memory.is_static_segment(address):
-                # Adjust address to be within static segment
-                adjusted_address = self.memory.STATIC_START + (address % (self.memory.STATIC_END - self.memory.STATIC_START + 1))
-                print(f"Warning: Address {hex(address)} is outside static data segment. "
-                    f"Adjusted to {hex(adjusted_address)}.")
-                address = adjusted_address
-                
-            self.memory.store(address, value)
+            # Check which segment the address belongs to and store accordingly
+            if self.memory.is_static_segment(address):
+                # Static segment data
+                self.memory.store(address, value)
+            elif self.memory.is_dynamic_segment(address):
+                # Dynamic/heap segment data
+                self.memory.store(address, value)
+            elif self.memory.is_stack_segment(address):
+                # Stack segment data
+                self.memory.store(address, value)
+            else:
+                # Address outside any defined segment, adjust to appropriate segment
+                if address < self.memory.TEXT_START:
+                    # Below memory range, adjust to start of memory
+                    adjusted_address = self.memory.TEXT_START
+                    segment_name = "text"
+                elif address <= self.memory.TEXT_END:
+                    # In text segment but program load should handle this
+                    print(f"Warning: Attempting to load data to text segment at {hex(address)}.")
+                    continue
+                elif address <= self.memory.STATIC_END:
+                    # In static range (should be caught by is_static_segment)
+                    adjusted_address = address
+                    segment_name = "static"
+                elif address <= self.memory.DYNAMIC_END:
+                    # In dynamic range (should be caught by is_dynamic_segment)
+                    adjusted_address = address
+                    segment_name = "dynamic"
+                elif address <= self.memory.STACK_END:
+                    # In stack range (should be caught by is_stack_segment)
+                    adjusted_address = address
+                    segment_name = "stack"
+                else:
+                    # Above memory range, default to static segment
+                    adjusted_address = self.memory.STATIC_START + (address % (self.memory.STATIC_END - self.memory.STATIC_START + 1))
+                    segment_name = "static"
+                    
+                print(f"Warning: Address {hex(address)} is outside valid memory segments. "
+                    f"Adjusted to {hex(adjusted_address)} in {segment_name} segment.")
+                self.memory.store(adjusted_address, value)
             
     def run(self, verbose=False):
         """

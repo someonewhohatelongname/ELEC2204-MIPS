@@ -41,7 +41,7 @@ def parse_initial_data(file_path, segment_type="static"):
     
     Args:
         file_path (str): Path to the data file
-        segment_type (str): Which segment to load the data into ("static", "dynamic", or "stack")
+        segment_type (str): Which segment to load the data into ("static", "heap", or "stack")
         
     Returns:
         list: List of (address, value) tuples
@@ -52,7 +52,7 @@ def parse_initial_data(file_path, segment_type="static"):
     if segment_type == "static":
         segment_start = Memory.STATIC_START
         segment_end = Memory.STATIC_END
-    elif segment_type == "dynamic":
+    elif segment_type == "heap":  # Changed from "dynamic" to "heap" for consistency
         segment_start = Memory.DYNAMIC_START
         segment_end = Memory.DYNAMIC_END
     elif segment_type == "stack":
@@ -63,6 +63,7 @@ def parse_initial_data(file_path, segment_type="static"):
         segment_start = Memory.STATIC_START
         segment_end = Memory.STATIC_END
     
+    # Rest of the function remains the same
     with open(file_path, 'r') as f:
         for line in f:
             # Remove comments and strip whitespace
@@ -101,7 +102,7 @@ def main():
     parser = argparse.ArgumentParser(description='MIPS Pipeline Simulator')
     parser.add_argument('program', help='Path to the MIPS assembly program file')
     parser.add_argument('--static-data', help='Path to the static data segment initialization file')
-    parser.add_argument('--dynamic-data', help='Path to the dynamic (heap) data segment initialization file')
+    parser.add_argument('--heap-data', help='Path to the heap (dynamic) data segment initialization file')  # Changed from dynamic-data to heap-data
     parser.add_argument('--stack-data', help='Path to the stack segment initialization file')
     parser.add_argument('--stack-pointer', type=int, help='Initial stack pointer value (defaults to top of stack)')
     parser.add_argument('--cycles', type=int, default=1000, help='Maximum number of cycles to simulate')
@@ -125,13 +126,13 @@ def main():
             print(f"Error: Static data file not found: {args.static_data}")
             return
     
-    # Load dynamic data if provided
-    dynamic_data = []
-    if args.dynamic_data:
+    # Load heap data if provided (renamed from dynamic_data)
+    heap_data = []
+    if args.heap_data:  # Changed from args.dynamic_data
         try:
-            dynamic_data = parse_initial_data(args.dynamic_data, "dynamic")
+            heap_data = parse_initial_data(args.heap_data, "heap")  # Changed from "dynamic" to "heap"
         except FileNotFoundError:
-            print(f"Error: Dynamic data file not found: {args.dynamic_data}")
+            print(f"Error: Heap data file not found: {args.heap_data}")  # Changed error message
             return
     
     # Load stack data if provided
@@ -144,7 +145,7 @@ def main():
             return
     
     # Combine all data
-    all_data = static_data + dynamic_data + stack_data
+    all_data = static_data + heap_data + stack_data  # Changed from dynamic_data to heap_data
     
     # Create and run simulator
     simulator = Simulator(program, all_data, args.cycles, args.stack_pointer)

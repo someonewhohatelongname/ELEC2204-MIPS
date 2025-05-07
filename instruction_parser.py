@@ -42,7 +42,6 @@ def parse_instruction(instruction):
         # Standard parsing for other instructions
         for i, operand in enumerate(parts[1:]):
             if i < len(instr_format):
-                # Fix the test: R-type instructions use rd, rs, rt format
                 field_name = instr_format[i]
                 operands[field_name] = operand
             else:

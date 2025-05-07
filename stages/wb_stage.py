@@ -31,5 +31,6 @@ class WBStage:
         if dest_reg:
             try:
                 self.register_file.write(dest_reg, write_data)
+                print(f"Register write: {dest_reg} = {write_data}")  # Debug print
             except ValueError as e:
                 print(f"Register write error to {dest_reg}: {e}")

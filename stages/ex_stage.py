@@ -13,7 +13,7 @@ class EXStage:
         control_signals = self.id_ex_reg.read("control_signals")
         
         # If it's a NOP instruction, propagate it
-        if control_signals.get("is_nop", True):
+        if not isinstance(control_signals, dict) or control_signals.get("is_nop", True):
             self.ex_mem_reg.write("control_signals", {"is_nop": True})
             return
             

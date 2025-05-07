@@ -64,7 +64,7 @@ class TestInstructionParser(unittest.TestCase):
         opcode, instr_type, operands = parse_instruction("add $t0, $t1, $t2")
         self.assertEqual(opcode, "add")
         self.assertEqual(instr_type, "R")
-        self.assertEqual(operands, {"rt": "$t0", "rs": "$t1", "rt": "$t2"})
+        self.assertEqual(operands, {"rd": "$t0", "rs": "$t1", "rt": "$t2"})
         
     def test_i_type_addi(self):
         opcode, instr_type, operands = parse_instruction("addi $t0, $t1, 123")

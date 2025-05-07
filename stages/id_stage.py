@@ -56,6 +56,7 @@ class IDStage:
         
         # Get source register values based on instruction type
         if instr_type == 'R':
+            # For R-type instructions, use rd as destination register
             if 'rs' in operands:
                 rs_val = self.register_file.read(operands['rs'])
             if 'rt' in operands:
@@ -68,6 +69,13 @@ class IDStage:
             # Handle immediate instructions
             if 'rs' in operands:
                 rs_val = self.register_file.read(operands['rs'])
+                
+            # For I-type instructions like addi, use rd as destination
+            if opcode == "addi":
+                dest_reg = operands.get('rd', None)
+            else:
+                # For other I-type instructions, typically use rt as destination
+                dest_reg = operands.get('rt', None)
                 
             # Parse immediate value
             if 'imm' in operands:
@@ -90,10 +98,7 @@ class IDStage:
                     except (IndexError, ValueError):
                         # Invalid format, use default values
                         pass
-                        
-            # Destination register for writeback (for I-type)
-            dest_reg = operands.get('rt', None)
-            
+        
         # Check for hazards and update hazard unit
         if dest_reg:
             self.hazard_unit.set_id_reg_target(dest_reg)

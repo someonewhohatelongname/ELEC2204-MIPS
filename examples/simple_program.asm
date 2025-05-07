@@ -11,7 +11,7 @@ add $t0, $t0, $t1   # Sum += Counter
 addi $t1, $t1, 1    # Counter++
 sub $t3, $t2, $t1   # $t3 = Limit - Counter
 or $t3, $t3, $zero  # This instruction will test forwarding
-addi $t4, $zero, 256 # Memory address
+addi $t4, $zero, 4096 # Memory address
 sw $t0, 0($t4)      # Store sum in memory
 lw $t5, 0($t4)      # Load sum from memory
 

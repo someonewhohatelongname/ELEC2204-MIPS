@@ -1,10 +1,20 @@
 class Memory:
+    # Total memory size: 16KB (4096 words)
+    MEM_SIZE = 0x4000  # 16KB total (0x4000 bytes)
+    
     # Memory layout constants
-    INSTR_START = 0x0000
-    INSTR_END = 0x0FFF
-    DATA_START = 0x1000
-    DATA_END = 0x3FFF
-    MEM_SIZE = 0x4000  # 16 KB total (0x4000 bytes)
+    TEXT_START = 0x0000      # Text (code) segment: 0x0000 - 0x0FFF (4KB)
+    TEXT_END = 0x0FFF
+    
+    STATIC_START = 0x1000    # Static data segment: 0x1000 - 0x1FFF (4KB)
+    STATIC_END = 0x1FFF
+    
+    DYNAMIC_START = 0x2000   # Dynamic (heap) segment: 0x2000 - 0x2FFF (4KB)
+    DYNAMIC_END = 0x2FFF
+    
+    STACK_START = 0x3000     # Stack segment: 0x3000 - 0x3FFF (4KB)
+    STACK_END = 0x3FFF
+    STACK_POINTER_INIT = STACK_END  # Stack grows downward
 
     def __init__(self):
         self.data = {}  # Initialize an empty dictionary to represent memory
@@ -38,37 +48,56 @@ class Memory:
         self._check_address_alignment(address)
         self._check_address_range(address)
         
-        # Check if this is an instruction memory write attempt
-        if self.is_instruction_memory(address):
-            # For a real system, we might want to prevent writes to instruction memory
-            # during execution, but for simulation purposes, we'll allow it
-            pass
-            
+        # Store the value
         self.data[address] = value
     
-    def is_instruction_memory(self, address: int) -> bool:
+    def is_text_segment(self, address: int) -> bool:
         """
-        Checks if the address is in the instruction memory region.
+        Checks if the address is in the text (code) segment.
         
         Args:
             address (int): The memory address to check.
             
         Returns:
-            bool: True if the address is in instruction memory, False otherwise.
+            bool: True if the address is in text segment, False otherwise.
         """
-        return self.INSTR_START <= address <= self.INSTR_END
+        return self.TEXT_START <= address <= self.TEXT_END
     
-    def is_data_memory(self, address: int) -> bool:
+    def is_static_segment(self, address: int) -> bool:
         """
-        Checks if the address is in the data memory region.
+        Checks if the address is in the static data segment.
         
         Args:
             address (int): The memory address to check.
             
         Returns:
-            bool: True if the address is in data memory, False otherwise.
+            bool: True if the address is in static data segment, False otherwise.
         """
-        return self.DATA_START <= address <= self.DATA_END
+        return self.STATIC_START <= address <= self.STATIC_END
+    
+    def is_dynamic_segment(self, address: int) -> bool:
+        """
+        Checks if the address is in the dynamic (heap) segment.
+        
+        Args:
+            address (int): The memory address to check.
+            
+        Returns:
+            bool: True if the address is in dynamic segment, False otherwise.
+        """
+        return self.DYNAMIC_START <= address <= self.DYNAMIC_END
+    
+    def is_stack_segment(self, address: int) -> bool:
+        """
+        Checks if the address is in the stack segment.
+        
+        Args:
+            address (int): The memory address to check.
+            
+        Returns:
+            bool: True if the address is in stack segment, False otherwise.
+        """
+        return self.STACK_START <= address <= self.STACK_END
     
     def _check_address_alignment(self, address: int) -> None:
         """
@@ -93,6 +122,6 @@ class Memory:
         Raises:
             ValueError: If the address is outside the valid memory range.
         """
-        if not (self.INSTR_START <= address <= self.DATA_END):
+        if not (self.TEXT_START <= address <= self.STACK_END):
             raise ValueError(f"Memory address {hex(address)} is outside the valid range " 
-                            f"({hex(self.INSTR_START)}-{hex(self.DATA_END)})")
+                            f"({hex(self.TEXT_START)}-{hex(self.STACK_END)})")

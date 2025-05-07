@@ -11,7 +11,7 @@ from logger import Logger
 from instruction_parser import parse_instruction
 
 class Simulator:
-    def __init__(self, program=None, data=None, max_cycles=1000):
+    def __init__(self, program=None, data=None, max_cycles=1000, stack_pointer=None):
         # Initialize components
         self.memory = Memory()
         self.register_file = Register()
@@ -36,10 +36,14 @@ class Simulator:
         # Initialize pipeline stages
         self.if_stage = IFStage(self.memory, self.if_id_reg, self.hazard_unit)
         self.id_stage = IDStage(self.register_file, self.if_id_reg, self.id_ex_reg, self.hazard_unit)
-        # Pass register_file to EXStage
         self.ex_stage = EXStage(self.id_ex_reg, self.ex_mem_reg, self.hazard_unit, self.register_file)
         self.mem_stage = MEMStage(self.memory, self.ex_mem_reg, self.mem_wb_reg, self.hazard_unit)
         self.wb_stage = WBStage(self.register_file, self.mem_wb_reg)
+        
+        # Initialize stack pointer
+        if stack_pointer is None:
+            stack_pointer = self.memory.STACK_POINTER_INIT
+        self.register_file.write("$sp", stack_pointer)
         
         # Load program and data if provided
         if program:
@@ -49,19 +53,17 @@ class Simulator:
             
     def load_program(self, program):
         """
-        Load program instructions into instruction memory.
+        Load program instructions into text segment memory.
         
         Args:
             program (list): List of (address, instruction) tuples
         """
         for address, instruction in program:
-            # Validate address is in instruction memory region
-            if not self.memory.is_instruction_memory(address):
-                # Adjust address to be within instruction memory if needed
-                adjusted_address = address % self.memory.MEM_SIZE
-                if adjusted_address > self.memory.INSTR_END:
-                    adjusted_address = address % (self.memory.INSTR_END + 1)
-                print(f"Warning: Address {hex(address)} is outside instruction memory. "
+            # Validate address is in text segment
+            if not self.memory.is_text_segment(address):
+                # Adjust address to be within text segment if needed
+                adjusted_address = self.memory.TEXT_START + (address % (self.memory.TEXT_END - self.memory.TEXT_START + 1))
+                print(f"Warning: Address {hex(address)} is outside text segment. "
                     f"Adjusted to {hex(adjusted_address)}.")
                 address = adjusted_address
                 
@@ -69,17 +71,17 @@ class Simulator:
             
     def load_data(self, data):
         """
-        Load data into data memory.
+        Load data into static data segment.
         
         Args:
             data (list): List of (address, value) tuples
         """
         for address, value in data:
-            # Validate address is in data memory region
-            if not self.memory.is_data_memory(address):
-                # Adjust address to be within data memory
-                adjusted_address = self.memory.DATA_START + (address % (self.memory.DATA_END - self.memory.DATA_START + 1))
-                print(f"Warning: Address {hex(address)} is outside data memory. "
+            # By default, load data into static segment
+            if not self.memory.is_static_segment(address):
+                # Adjust address to be within static segment
+                adjusted_address = self.memory.STATIC_START + (address % (self.memory.STATIC_END - self.memory.STATIC_START + 1))
+                print(f"Warning: Address {hex(address)} is outside static data segment. "
                     f"Adjusted to {hex(adjusted_address)}.")
                 address = adjusted_address
                 
@@ -183,8 +185,32 @@ class Simulator:
             reg_state[name] = self.register_file.regs[num]
         self.logger.log_registers(reg_state)
         
-        # Log memory
-        self.logger.log_memory(self.memory.data)
+        # Log memory (categorize by segments)
+        memory_state = {}
+        
+        # Add text segment entries
+        text_segment = {addr: val for addr, val in self.memory.data.items() 
+                       if self.memory.is_text_segment(addr)}
+        
+        # Add static segment entries
+        static_segment = {addr: val for addr, val in self.memory.data.items() 
+                         if self.memory.is_static_segment(addr)}
+        
+        # Add dynamic segment entries
+        dynamic_segment = {addr: val for addr, val in self.memory.data.items() 
+                          if self.memory.is_dynamic_segment(addr)}
+        
+        # Add stack segment entries
+        stack_segment = {addr: val for addr, val in self.memory.data.items() 
+                        if self.memory.is_stack_segment(addr)}
+        
+        # Combine all segments with labels
+        memory_state.update({f"TEXT[{hex(addr)}]": val for addr, val in text_segment.items()})
+        memory_state.update({f"STATIC[{hex(addr)}]": val for addr, val in static_segment.items()})
+        memory_state.update({f"HEAP[{hex(addr)}]": val for addr, val in dynamic_segment.items()})
+        memory_state.update({f"STACK[{hex(addr)}]": val for addr, val in stack_segment.items()})
+        
+        self.logger.log_memory(memory_state)
         
     def check_completion(self):
         """Check if the simulation is complete (no more valid instructions in the pipeline)."""

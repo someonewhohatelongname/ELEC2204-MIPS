@@ -2,6 +2,7 @@
 import argparse
 from simulator import Simulator
 from instruction_parser import parse_instruction
+from memory import Memory
 
 def load_assembly_program(file_path):
     """
@@ -13,10 +14,8 @@ def load_assembly_program(file_path):
     Returns:
         list: List of (address, instruction) tuples
     """
-    from memory import Memory  # Import to access memory constants
-    
     program = []
-    address = Memory.INSTR_START  # Start at the beginning of instruction memory
+    address = Memory.TEXT_START  # Start at the beginning of text segment
     
     with open(file_path, 'r') as f:
         for line in f:
@@ -27,28 +26,42 @@ def load_assembly_program(file_path):
                 program.append((address, line))
                 address += 4  # Instructions are word-aligned
                 
-                # Check if we've exceeded instruction memory
-                if address > Memory.INSTR_END:
-                    print(f"Warning: Program exceeds instruction memory limit at {hex(address)}")
+                # Check if we've exceeded text segment
+                if address > Memory.TEXT_END:
+                    print(f"Warning: Program exceeds text segment limit at {hex(address)}")
                     # We could either wrap around or truncate here
                     # For safety, we'll truncate
                     break
                 
     return program
 
-def parse_initial_data(file_path):
+def parse_initial_data(file_path, segment_type="static"):
     """
     Parse initial data memory values from a file.
     
     Args:
         file_path (str): Path to the data file
+        segment_type (str): Which segment to load the data into ("static", "dynamic", or "stack")
         
     Returns:
         list: List of (address, value) tuples
     """
-    from memory import Memory  # Import to access memory constants
-    
     data = []
+    
+    # Determine the segment range
+    if segment_type == "static":
+        segment_start = Memory.STATIC_START
+        segment_end = Memory.STATIC_END
+    elif segment_type == "dynamic":
+        segment_start = Memory.DYNAMIC_START
+        segment_end = Memory.DYNAMIC_END
+    elif segment_type == "stack":
+        segment_start = Memory.STACK_START
+        segment_end = Memory.STACK_END
+    else:
+        print(f"Warning: Unknown segment type '{segment_type}'. Using static segment.")
+        segment_start = Memory.STATIC_START
+        segment_end = Memory.STATIC_END
     
     with open(file_path, 'r') as f:
         for line in f:
@@ -71,10 +84,10 @@ def parse_initial_data(file_path):
                         else:
                             value = int(parts[1].strip())
                             
-                        # Check if address is in data memory range
-                        if not (Memory.DATA_START <= address <= Memory.DATA_END):
-                            adjusted_address = Memory.DATA_START + (address % (Memory.DATA_END - Memory.DATA_START + 1))
-                            print(f"Warning: Address {hex(address)} is outside data memory. "
+                        # Check if address is in the specified segment range
+                        if not (segment_start <= address <= segment_end):
+                            adjusted_address = segment_start + (address % (segment_end - segment_start + 1))
+                            print(f"Warning: Address {hex(address)} is outside {segment_type} segment. "
                                 f"Adjusted to {hex(adjusted_address)}.")
                             address = adjusted_address
                             
@@ -87,7 +100,10 @@ def parse_initial_data(file_path):
 def main():
     parser = argparse.ArgumentParser(description='MIPS Pipeline Simulator')
     parser.add_argument('program', help='Path to the MIPS assembly program file')
-    parser.add_argument('--data', help='Path to the initial data memory file')
+    parser.add_argument('--static-data', help='Path to the static data segment initialization file')
+    parser.add_argument('--dynamic-data', help='Path to the dynamic (heap) data segment initialization file')
+    parser.add_argument('--stack-data', help='Path to the stack segment initialization file')
+    parser.add_argument('--stack-pointer', type=int, help='Initial stack pointer value (defaults to top of stack)')
     parser.add_argument('--cycles', type=int, default=1000, help='Maximum number of cycles to simulate')
     parser.add_argument('--verbose', action='store_true', help='Print detailed cycle-by-cycle logs')
     
@@ -100,17 +116,38 @@ def main():
         print(f"Error: Program file not found: {args.program}")
         return
         
-    # Load data if provided
-    data = None
-    if args.data:
+    # Load static data if provided
+    static_data = []
+    if args.static_data:
         try:
-            data = parse_initial_data(args.data)
+            static_data = parse_initial_data(args.static_data, "static")
         except FileNotFoundError:
-            print(f"Error: Data file not found: {args.data}")
+            print(f"Error: Static data file not found: {args.static_data}")
             return
-            
+    
+    # Load dynamic data if provided
+    dynamic_data = []
+    if args.dynamic_data:
+        try:
+            dynamic_data = parse_initial_data(args.dynamic_data, "dynamic")
+        except FileNotFoundError:
+            print(f"Error: Dynamic data file not found: {args.dynamic_data}")
+            return
+    
+    # Load stack data if provided
+    stack_data = []
+    if args.stack_data:
+        try:
+            stack_data = parse_initial_data(args.stack_data, "stack")
+        except FileNotFoundError:
+            print(f"Error: Stack data file not found: {args.stack_data}")
+            return
+    
+    # Combine all data
+    all_data = static_data + dynamic_data + stack_data
+    
     # Create and run simulator
-    simulator = Simulator(program, data, args.cycles)
+    simulator = Simulator(program, all_data, args.cycles, args.stack_pointer)
     cycles = simulator.run(args.verbose)
     
     print(f"\nSimulation completed in {cycles} cycles")

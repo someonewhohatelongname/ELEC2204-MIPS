@@ -69,9 +69,35 @@ class Logger:
             if value != 0:
                 self._log(f"  {reg}: {value}")
 
+        # Group memory by segments for better visualization
         self._log("\nMemory:")
-        for addr, value in cycle_log["memory"].items():
-            self._log(f"  {addr}: {value}")
+        
+        # Extract memory segments from keys
+        text_segment = {k: v for k, v in cycle_log["memory"].items() if "TEXT[" in k}
+        static_segment = {k: v for k, v in cycle_log["memory"].items() if "STATIC[" in k}
+        heap_segment = {k: v for k, v in cycle_log["memory"].items() if "HEAP[" in k}
+        stack_segment = {k: v for k, v in cycle_log["memory"].items() if "STACK[" in k}
+        
+        # Print each segment with a header
+        if text_segment:
+            self._log("  TEXT SEGMENT:")
+            for addr, value in text_segment.items():
+                self._log(f"    {addr}: {value}")
+        
+        if static_segment:
+            self._log("  STATIC SEGMENT:")
+            for addr, value in static_segment.items():
+                self._log(f"    {addr}: {value}")
+        
+        if heap_segment:
+            self._log("  HEAP SEGMENT:")
+            for addr, value in heap_segment.items():
+                self._log(f"    {addr}: {value}")
+        
+        if stack_segment:
+            self._log("  STACK SEGMENT:")
+            for addr, value in stack_segment.items():
+                self._log(f"    {addr}: {value}")
 
         self._log("=" * 30)
 
@@ -85,5 +111,30 @@ class Logger:
                 self._log(f"  {reg}: {value}")
 
         self._log("\nFinal Memory State:")
-        for addr, value in last_cycle["memory"].items():
-            self._log(f"  {addr}: {value}")
+        
+        # Extract memory segments from keys
+        text_segment = {k: v for k, v in last_cycle["memory"].items() if "TEXT[" in k}
+        static_segment = {k: v for k, v in last_cycle["memory"].items() if "STATIC[" in k}
+        heap_segment = {k: v for k, v in last_cycle["memory"].items() if "HEAP[" in k}
+        stack_segment = {k: v for k, v in last_cycle["memory"].items() if "STACK[" in k}
+        
+        # Print each segment with a header
+        if text_segment:
+            self._log("  TEXT SEGMENT:")
+            for addr, value in text_segment.items():
+                self._log(f"    {addr}: {value}")
+        
+        if static_segment:
+            self._log("  STATIC SEGMENT:")
+            for addr, value in static_segment.items():
+                self._log(f"    {addr}: {value}")  
+            
+        if heap_segment:
+            self._log("  HEAP SEGMENT:")
+            for addr, value in heap_segment.items():
+                self._log(f"    {addr}: {value}")
+
+        if stack_segment:
+            self._log("  STACK SEGMENT:")
+            for addr, value in stack_segment.items():
+                self._log(f"    {addr}: {value}")

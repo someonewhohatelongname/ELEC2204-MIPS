@@ -1,7 +1,8 @@
 class WBStage:
-    def __init__(self, register_file, mem_wb_reg):
+    def __init__(self, register_file, mem_wb_reg, hazard_unit):  # Add hazard_unit parameter
         self.register_file = register_file
         self.mem_wb_reg = mem_wb_reg
+        self.hazard_unit = hazard_unit  # Store hazard unit reference
 
     def execute(self):
         """
@@ -31,6 +32,9 @@ class WBStage:
         if dest_reg:
             try:
                 self.register_file.write(dest_reg, write_data)
-                print(f"Register write: {dest_reg} = {write_data}")  # Debug print
+                print(f"Register write: {dest_reg} = {write_data}")
+                
+                # NEW: Update hazard unit for WB forwarding
+                self.hazard_unit.set_wb_reg_target(dest_reg, write_data)
             except ValueError as e:
                 print(f"Register write error to {dest_reg}: {e}")

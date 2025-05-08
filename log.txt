@@ -2,10 +2,10 @@
 
 Pipeline Stages:
   IF:
-    Instruction: addi $t1, $zero, 5
+    Instruction: addi  $a0, $zero , 0
     pc: 4
   ID:
-    Instruction: addi $t0, $zero, 4096
+    Instruction: addi  $s0 , $zero, 4096
   EX:
     Instruction: {}
     RS: {} = {}
@@ -26,19 +26,22 @@ Registers:
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
     STATIC[0x1000]: 100
 ==============================
@@ -46,17 +49,17 @@ Memory:
 
 Pipeline Stages:
   IF:
-    Instruction: addi $t2, $zero, 3
+    Instruction: sw    $a0, 0($s0)
     pc: 8
   ID:
-    Instruction: addi $t1, $zero, 5
+    Instruction: addi  $a0, $zero , 0
   EX:
-    Instruction: addi $t0, $zero, 4096
-    Binary: 001000 00000 01000 00010 00000 000000
+    Instruction: addi  $s0 , $zero, 4096
+    Binary: 001000 00000 10000 00010 00000 000000
     Binary Fields:
       opcode: 001000
       rs: 00000
-      rt: 01000
+      rt: 10000
       immediate: 0001000000000000
     RS: $zero = 0
     RT: {} = None
@@ -76,19 +79,22 @@ Registers:
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
     STATIC[0x1000]: 100
 ==============================
@@ -96,23 +102,23 @@ Memory:
 
 Pipeline Stages:
   IF:
-    Instruction: add  $t3, $t1, $t2
+    Instruction: addi   $s0, $s0, 4
     pc: 12
   ID:
-    Instruction: addi $t2, $zero, 3
+    Instruction: sw    $a0, 0($s0)
   EX:
-    Instruction: addi $t1, $zero, 5
-    Binary: 001000 00000 01001 00000 00000 000101
+    Instruction: addi  $a0, $zero , 0
+    Binary: 001000 00000 00100 00000 00000 000000
     Binary Fields:
       opcode: 001000
       rs: 00000
-      rt: 01001
-      immediate: 0000000000000101
+      rt: 00100
+      immediate: 0000000000000000
     RS: $zero = 0
     RT: {} = None
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: addi $t0, $zero, 4096
+    Instruction: addi  $s0 , $zero, 4096
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
     alu_result: 4096
   WB:
@@ -126,19 +132,22 @@ Registers:
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
     STATIC[0x1000]: 100
 ==============================
@@ -146,29 +155,29 @@ Memory:
 
 Pipeline Stages:
   IF:
-    Instruction: sub  $t4, $t1, $t2
+    Instruction: addi  $a0, $zero , 1
     pc: 16
   ID:
-    Instruction: add  $t3, $t1, $t2
+    Instruction: addi   $s0, $s0, 4
   EX:
-    Instruction: addi $t2, $zero, 3
-    Binary: 001000 00000 01010 00000 00000 000011
+    Instruction: sw    $a0, 0($s0)
+    Binary: 101011 10000 00100 00000 00000 000000
     Binary Fields:
-      opcode: 001000
-      rs: 00000
-      rt: 01010
-      immediate: 0000000000000011
-    RS: $zero = 0
-    RT: {} = None
-    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 101011
+      rs: 10000
+      rt: 00100
+      immediate: 0000000000000000
+    RS: $s0 = 0
+    RT: $a0 = 0
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: addi $t1, $zero, 5
+    Instruction: addi  $a0, $zero , 0
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 5
+    alu_result: 0
   WB:
-    Instruction: addi $t0, $zero, 4096
+    Instruction: addi  $s0 , $zero, 4096
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t0
+    dest_reg: $s0
 
 Registers:
   $sp: 16383
@@ -176,19 +185,22 @@ Registers:
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
     STATIC[0x1000]: 100
 ==============================
@@ -196,53 +208,54 @@ Memory:
 
 Pipeline Stages:
   IF:
-    Instruction: and  $t5, $t1, $t2
+    Instruction: sw    $a0, 0($s0)
     pc: 20
   ID:
-    Instruction: sub  $t4, $t1, $t2
+    Instruction: addi  $a0, $zero , 1
   EX:
-    Instruction: add  $t3, $t1, $t2
-    Binary: 000000 01001 01010 01011 00000 100000
+    Instruction: addi   $s0, $s0, 4
+    Binary: 001000 10000 10000 00000 00000 000100
     Binary Fields:
-      opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 01011
-      shamt: 00000
-      funct: 100000
-    RS: $t1 = 0
-    RT: $t2 = 0
-    control: {'opcode': 'add', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 001000
+      rs: 10000
+      rt: 10000
+      immediate: 0000000000000100
+    RS: $s0 = 4096
+    RT: $a0 = None
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: addi $t2, $zero, 3
-    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 3
+    Instruction: sw    $a0, 0($s0)
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4096
   WB:
-    Instruction: addi $t1, $zero, 5
+    Instruction: addi  $a0, $zero , 0
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t1
+    dest_reg: $a0
 
 Registers:
-  $t0: 4096
-  $8: 4096
+  $s0: 4096
+  $16: 4096
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
     STATIC[0x1000]: 100
 ==============================
@@ -250,875 +263,522 @@ Memory:
 
 Pipeline Stages:
   IF:
-    Instruction: or   $t6, $t1, $t2
+    Instruction: addi   $s0, $s0, 4
     pc: 24
   ID:
-    Instruction: and  $t5, $t1, $t2
+    Instruction: sw    $a0, 0($s0)
   EX:
-    Instruction: sub  $t4, $t1, $t2
-    Binary: 000000 01001 01010 01100 00000 100010
+    Instruction: addi  $a0, $zero , 1
+    Binary: 001000 00000 00100 00000 00000 000001
     Binary Fields:
-      opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 01100
-      shamt: 00000
-      funct: 100010
-    RS: $t1 = 5
-    RT: $t2 = 0
-    control: {'opcode': 'sub', 'alu_op': 'SUB', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-  MEM:
-    Instruction: add  $t3, $t1, $t2
-    control: {'opcode': 'add', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 8
-  WB:
-    Instruction: addi $t2, $zero, 3
+      opcode: 001000
+      rs: 00000
+      rt: 00100
+      immediate: 0000000000000001
+    RS: $zero = 0
+    RT: $a0 = None
     control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t2
+  MEM:
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4100
+  WB:
+    Instruction: sw    $a0, 0($s0)
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: None
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
+  $s0: 4096
+  $16: 4096
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
 ==============================
 ===== Cycle 7 =====
 
 Pipeline Stages:
   IF:
-    Instruction: xor  $t7, $t1, $t2
+    Instruction: addi  $a0, $zero , 2
     pc: 28
   ID:
-    Instruction: or   $t6, $t1, $t2
+    Instruction: addi   $s0, $s0, 4
   EX:
-    Instruction: and  $t5, $t1, $t2
-    Binary: 000000 01001 01010 01101 00000 100100
+    Instruction: sw    $a0, 0($s0)
+    Binary: 101011 10000 00100 00000 00000 000000
     Binary Fields:
-      opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 01101
-      shamt: 00000
-      funct: 100100
-    RS: $t1 = 5
-    RT: $t2 = 3
-    control: {'opcode': 'and', 'alu_op': 'AND', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 101011
+      rs: 10000
+      rt: 00100
+      immediate: 0000000000000000
+    RS: $s0 = 4096
+    RT: $a0 = 0
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: sub  $t4, $t1, $t2
-    control: {'opcode': 'sub', 'alu_op': 'SUB', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 2
+    Instruction: addi  $a0, $zero , 1
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 1
   WB:
-    Instruction: add  $t3, $t1, $t2
-    control: {'opcode': 'add', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t3
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $s0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
+  $s0: 4096
+  $16: 4096
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
 ==============================
 ===== Cycle 8 =====
 
 Pipeline Stages:
   IF:
-    Instruction: nor  $s0, $t1, $t2
+    Instruction: sll   $t0, $a0 , 1
     pc: 32
   ID:
-    Instruction: xor  $t7, $t1, $t2
+    Instruction: addi  $a0, $zero , 2
   EX:
-    Instruction: or   $t6, $t1, $t2
-    Binary: 000000 01001 01010 01110 00000 100101
+    Instruction: addi   $s0, $s0, 4
+    Binary: 001000 10000 10000 00000 00000 000100
     Binary Fields:
-      opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 01110
-      shamt: 00000
-      funct: 100101
-    RS: $t1 = 5
-    RT: $t2 = 3
-    control: {'opcode': 'or', 'alu_op': 'OR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 001000
+      rs: 10000
+      rt: 10000
+      immediate: 0000000000000100
+    RS: $s0 = 4100
+    RT: $a0 = None
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: and  $t5, $t1, $t2
-    control: {'opcode': 'and', 'alu_op': 'AND', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 1
+    Instruction: sw    $a0, 0($s0)
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4100
   WB:
-    Instruction: sub  $t4, $t1, $t2
-    control: {'opcode': 'sub', 'alu_op': 'SUB', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t4
+    Instruction: addi  $a0, $zero , 1
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $a0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
+  $s0: 4100
+  $16: 4100
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
 ==============================
 ===== Cycle 9 =====
 
 Pipeline Stages:
   IF:
-    Instruction: sw   $t3, 0($t0)
+    Instruction: sw    $t0, 0($s0)
     pc: 36
   ID:
-    Instruction: nor  $s0, $t1, $t2
+    Instruction: sll   $t0, $a0 , 1
   EX:
-    Instruction: xor  $t7, $t1, $t2
-    Binary: 000000 01001 01010 01111 00000 100110
+    Instruction: addi  $a0, $zero , 2
+    Binary: 001000 00000 00100 00000 00000 000010
     Binary Fields:
-      opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 01111
-      shamt: 00000
-      funct: 100110
-    RS: $t1 = 5
-    RT: $t2 = 3
-    control: {'opcode': 'xor', 'alu_op': 'XOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 001000
+      rs: 00000
+      rt: 00100
+      immediate: 0000000000000010
+    RS: $zero = 0
+    RT: $a0 = None
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: or   $t6, $t1, $t2
-    control: {'opcode': 'or', 'alu_op': 'OR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 7
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4104
   WB:
-    Instruction: and  $t5, $t1, $t2
-    control: {'opcode': 'and', 'alu_op': 'AND', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t5
+    Instruction: sw    $a0, 0($s0)
+    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: None
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
+  $a0: 1
+  $4: 1
+  $s0: 4100
+  $16: 4100
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
 ==============================
 ===== Cycle 10 =====
 
 Pipeline Stages:
   IF:
-    Instruction: sll $t3, $t1, 2
+    Instruction: addi   $s0, $s0, 4
     pc: 40
   ID:
-    Instruction: sw   $t3, 0($t0)
+    Instruction: sw    $t0, 0($s0)
   EX:
-    Instruction: nor  $s0, $t1, $t2
-    Binary: 000000 01001 01010 10000 00000 100111
+    Instruction: sll   $t0, $a0 , 1
+    Binary: 000000 00000 00100 01000 00000 000000
     Binary Fields:
       opcode: 000000
-      rs: 01001
-      rt: 01010
-      rd: 10000
+      rs: 00000
+      rt: 00100
+      rd: 01000
       shamt: 00000
-      funct: 100111
-    RS: $t1 = 5
-    RT: $t2 = 3
-    control: {'opcode': 'nor', 'alu_op': 'NOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      funct: 000000
+    RS: $zero = None
+    RT: $a0 = 1
+    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: xor  $t7, $t1, $t2
-    control: {'opcode': 'xor', 'alu_op': 'XOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 6
+    Instruction: addi  $a0, $zero , 2
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 2
   WB:
-    Instruction: or   $t6, $t1, $t2
-    control: {'opcode': 'or', 'alu_op': 'OR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t6
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $s0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
+  $a0: 1
+  $4: 1
+  $s0: 4100
+  $16: 4100
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
 ==============================
 ===== Cycle 11 =====
 
 Pipeline Stages:
   IF:
-    Instruction: lw   $s1, 0($t0)
+    Instruction: addi  $a0, $zero , 3
     pc: 44
   ID:
-    Instruction: sll $t3, $t1, 2
+    Instruction: addi   $s0, $s0, 4
   EX:
-    Instruction: sw   $t3, 0($t0)
-    Binary: 101011 01000 01011 00000 00000 000000
+    Instruction: sw    $t0, 0($s0)
+    Binary: 101011 10000 01000 00000 00000 000000
     Binary Fields:
       opcode: 101011
-      rs: 01000
-      rt: 01011
+      rs: 10000
+      rt: 01000
       immediate: 0000000000000000
-    RS: $t0 = 4096
-    RT: $t3 = 8
+    RS: $s0 = 4104
+    RT: $t0 = 0
     control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: nor  $s0, $t1, $t2
-    control: {'opcode': 'nor', 'alu_op': 'NOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: -8
+    Instruction: sll   $t0, $a0 , 1
+    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4
   WB:
-    Instruction: xor  $t7, $t1, $t2
-    control: {'opcode': 'xor', 'alu_op': 'XOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t7
+    Instruction: addi  $a0, $zero , 2
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $a0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
+  $a0: 1
+  $4: 1
+  $s0: 4104
+  $16: 4104
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
 ==============================
 ===== Cycle 12 =====
 
 Pipeline Stages:
   IF:
-    Instruction: sw   $s1, 4($t0)
+    Instruction: sll   $t0, $a0 , 1
     pc: 48
   ID:
-    Instruction: lw   $s1, 0($t0)
+    Instruction: addi  $a0, $zero , 3
   EX:
-    Instruction: sll $t3, $t1, 2
-    Binary: 000000 00000 01001 01011 00000 000000
+    Instruction: addi   $s0, $s0, 4
+    Binary: 001000 10000 10000 00000 00000 000100
     Binary Fields:
-      opcode: 000000
-      rs: 00000
-      rt: 01001
-      rd: 01011
-      shamt: 00000
-      funct: 000000
-    RS: $t0 = None
-    RT: $t1 = 5
-    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 001000
+      rs: 10000
+      rt: 10000
+      immediate: 0000000000000100
+    RS: $s0 = 4104
+    RT: $t0 = None
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: sw   $t3, 0($t0)
+    Instruction: sw    $t0, 0($s0)
     control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 4096
+    alu_result: 4104
   WB:
-    Instruction: nor  $s0, $t1, $t2
-    control: {'opcode': 'nor', 'alu_op': 'NOR', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $s0
+    Instruction: sll   $t0, $a0 , 1
+    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $t0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
+  $a0: 2
+  $4: 2
+  $s0: 4104
+  $16: 4104
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 100
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
 ==============================
 ===== Cycle 13 =====
 
 Pipeline Stages:
   IF:
-    Instruction: 0
+    Instruction: addi  $t0, $t0 , $a3
     pc: 52
   ID:
-    Instruction: sw   $s1, 4($t0)
+    Instruction: sll   $t0, $a0 , 1
   EX:
-    Instruction: lw   $s1, 0($t0)
-    Binary: 100011 01000 10001 00000 00000 000000
+    Instruction: addi  $a0, $zero , 3
+    Binary: 001000 00000 00100 00000 00000 000011
     Binary Fields:
-      opcode: 100011
-      rs: 01000
-      rt: 10001
-      immediate: 0000000000000000
-    RS: $t0 = 4096
-    RT: $s1 = 0
-    control: {'opcode': 'lw', 'alu_op': 'ADD', 'mem_read': True, 'mem_write': False, 'reg_write': True, 'mem_to_reg': True, 'is_nop': False}
+      opcode: 001000
+      rs: 00000
+      rt: 00100
+      immediate: 0000000000000011
+    RS: $zero = 0
+    RT: $t0 = None
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: sll $t3, $t1, 2
-    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 20
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 4108
   WB:
-    Instruction: sw   $t3, 0($t0)
+    Instruction: sw    $t0, 0($s0)
     control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t3
+    dest_reg: None
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
+  $a0: 2
+  $4: 2
+  $t0: 4
+  $8: 4
+  $s0: 4104
+  $16: 4104
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 8
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
+    STATIC[0x1008]: 4
 ==============================
 ===== Cycle 14 =====
 
 Pipeline Stages:
   IF:
-    Instruction: 0
-    pc: 52
-  ID:
-    Instruction: sw   $s1, 4($t0)
-  EX:
-    Instruction: lw   $s1, 0($t0)
-    Binary: 100011 01000 10001 00000 00000 000000
-    Binary Fields:
-      opcode: 100011
-      rs: 01000
-      rt: 10001
-      immediate: 0000000000000000
-    RS: $t0 = 4096
-    RT: $s1 = 0
-    control: {'is_nop': True}
-  MEM:
-    Instruction: lw   $s1, 0($t0)
-    control: {'opcode': 'lw', 'alu_op': 'ADD', 'mem_read': True, 'mem_write': False, 'reg_write': True, 'mem_to_reg': True, 'is_nop': False}
-    alu_result: 4096
-  WB:
-    Instruction: sll $t3, $t1, 2
-    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $t3
-
-Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 8
-  $11: 8
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
-  $sp: 16383
-  $29: 16383
-
-Memory:
-  TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
-  STATIC SEGMENT:
-    STATIC[0x1000]: 8
-==============================
-===== Cycle 15 =====
-
-Pipeline Stages:
-  IF:
-    Instruction: 0
+    Instruction: sw    $t0, 0($s0)
     pc: 56
   ID:
-    Instruction: 0
+    Instruction: addi  $t0, $t0 , $a3
   EX:
-    Instruction: sw   $s1, 4($t0)
-    Binary: 101011 01000 10001 00000 00000 000100
+    Instruction: sll   $t0, $a0 , 1
+    Binary: 000000 00000 00100 01000 00000 000000
     Binary Fields:
-      opcode: 101011
-      rs: 01000
-      rt: 10001
-      immediate: 0000000000000100
-    RS: $t0 = 4096
-    RT: $s1 = 0
-    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
+      opcode: 000000
+      rs: 00000
+      rt: 00100
+      rd: 01000
+      shamt: 00000
+      funct: 000000
+    RS: $zero = None
+    RT: $a0 = 2
+    control: {'opcode': 'sll', 'alu_op': 'SLL', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
   MEM:
-    Instruction: None
-    control: {'is_nop': True}
-    alu_result: {}
+    Instruction: addi  $a0, $zero , 3
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    alu_result: 3
   WB:
-    Instruction: lw   $s1, 0($t0)
-    control: {'opcode': 'lw', 'alu_op': 'ADD', 'mem_read': True, 'mem_write': False, 'reg_write': True, 'mem_to_reg': True, 'is_nop': False}
-    dest_reg: $s1
+    Instruction: addi   $s0, $s0, 4
+    control: {'opcode': 'addi', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': False, 'reg_write': True, 'mem_to_reg': False, 'is_nop': False}
+    dest_reg: $s0
 
 Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 20
-  $11: 20
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
+  $a0: 2
+  $4: 2
+  $t0: 4
+  $8: 4
+  $s0: 4104
+  $16: 4104
   $sp: 16383
   $29: 16383
 
 Memory:
   TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
+    TEXT[0x0]: addi  $s0 , $zero, 4096
+    TEXT[0x4]: addi  $a0, $zero , 0
+    TEXT[0x8]: sw    $a0, 0($s0)
+    TEXT[0xc]: addi   $s0, $s0, 4
+    TEXT[0x10]: addi  $a0, $zero , 1
+    TEXT[0x14]: sw    $a0, 0($s0)
+    TEXT[0x18]: addi   $s0, $s0, 4
+    TEXT[0x1c]: addi  $a0, $zero , 2
+    TEXT[0x20]: sll   $t0, $a0 , 1
+    TEXT[0x24]: sw    $t0, 0($s0)
+    TEXT[0x28]: addi   $s0, $s0, 4
+    TEXT[0x2c]: addi  $a0, $zero , 3
+    TEXT[0x30]: sll   $t0, $a0 , 1
+    TEXT[0x34]: addi  $t0, $t0 , $a3
+    TEXT[0x38]: sw    $t0, 0($s0)
+    TEXT[0x3c]: addi   $s0, $s0, 4
   STATIC SEGMENT:
-    STATIC[0x1000]: 8
-==============================
-===== Cycle 16 =====
-
-Pipeline Stages:
-  IF:
-    Instruction: 0
-    pc: 60
-  ID:
-    Instruction: 0
-  EX:
-    Instruction: 0
-    RS: {} = {}
-    RT: {} = {}
-    control: {'is_nop': True}
-  MEM:
-    Instruction: sw   $s1, 4($t0)
-    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
-    alu_result: 4100
-  WB:
-    Instruction: lw   $s1, 0($t0)
-    control: {'is_nop': True}
-    dest_reg: $s1
-
-Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 20
-  $11: 20
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
-  $s1: 8
-  $17: 8
-  $sp: 16383
-  $29: 16383
-
-Memory:
-  TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
-  STATIC SEGMENT:
-    STATIC[0x1000]: 8
-==============================
-===== Cycle 17 =====
-
-Pipeline Stages:
-  IF:
-    Instruction: 0
-    pc: 64
-  ID:
-    Instruction: 0
-  EX:
-    Instruction: 0
-    RS: {} = {}
-    RT: {} = {}
-    control: {'is_nop': True}
-  MEM:
-    Instruction: None
-    control: {'is_nop': True}
-    alu_result: {}
-  WB:
-    Instruction: sw   $s1, 4($t0)
-    control: {'opcode': 'sw', 'alu_op': 'ADD', 'mem_read': False, 'mem_write': True, 'reg_write': False, 'mem_to_reg': False, 'is_nop': False}
-    dest_reg: $s1
-
-Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 20
-  $11: 20
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
-  $s1: 8
-  $17: 8
-  $sp: 16383
-  $29: 16383
-
-Memory:
-  TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
-  STATIC SEGMENT:
-    STATIC[0x1000]: 8
-    STATIC[0x1004]: 8
-==============================
-===== Cycle 18 =====
-
-Pipeline Stages:
-  IF:
-    Instruction: 0
-    pc: 68
-  ID:
-    Instruction: 0
-  EX:
-    Instruction: 0
-    RS: {} = {}
-    RT: {} = {}
-    control: {'is_nop': True}
-  MEM:
-    Instruction: None
-    control: {'is_nop': True}
-    alu_result: {}
-  WB:
-    Instruction: sw   $s1, 4($t0)
-    control: {'is_nop': True}
-    dest_reg: $s1
-
-Registers:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 20
-  $11: 20
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
-  $s1: 8
-  $17: 8
-  $sp: 16383
-  $29: 16383
-
-Memory:
-  TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
-  STATIC SEGMENT:
-    STATIC[0x1000]: 8
-    STATIC[0x1004]: 8
-==============================
-
-===== Summary (18 cycles) =====
-
-Final Register State:
-  $t0: 4096
-  $8: 4096
-  $t1: 5
-  $9: 5
-  $t2: 3
-  $10: 3
-  $t3: 20
-  $11: 20
-  $t4: 2
-  $12: 2
-  $t5: 1
-  $13: 1
-  $t6: 7
-  $14: 7
-  $t7: 6
-  $15: 6
-  $s0: -8
-  $16: -8
-  $s1: 8
-  $17: 8
-  $sp: 16383
-  $29: 16383
-
-Final Memory State:
-  TEXT SEGMENT:
-    TEXT[0x0]: addi $t0, $zero, 4096
-    TEXT[0x4]: addi $t1, $zero, 5
-    TEXT[0x8]: addi $t2, $zero, 3
-    TEXT[0xc]: add  $t3, $t1, $t2
-    TEXT[0x10]: sub  $t4, $t1, $t2
-    TEXT[0x14]: and  $t5, $t1, $t2
-    TEXT[0x18]: or   $t6, $t1, $t2
-    TEXT[0x1c]: xor  $t7, $t1, $t2
-    TEXT[0x20]: nor  $s0, $t1, $t2
-    TEXT[0x24]: sw   $t3, 0($t0)
-    TEXT[0x28]: sll $t3, $t1, 2
-    TEXT[0x2c]: lw   $s1, 0($t0)
-    TEXT[0x30]: sw   $s1, 4($t0)
-  STATIC SEGMENT:
-    STATIC[0x1000]: 8
-    STATIC[0x1004]: 8
+    STATIC[0x1000]: 0
+    STATIC[0x1004]: 1
+    STATIC[0x1008]: 4
 ==============================

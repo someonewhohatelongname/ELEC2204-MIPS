@@ -7,11 +7,13 @@ class HazardUnit:
         self.ex_mem_reg = ex_mem_reg
         self.mem_wb_reg = mem_wb_reg
         
-        # For forwarding
+        # For forwarding - add WB stage forwarding
         self.ex_forwarding_reg = None
         self.ex_forwarding_value = 0
         self.mem_forwarding_reg = None
         self.mem_forwarding_value = 0
+        self.wb_forwarding_reg = None  # NEW: Add WB forwarding register
+        self.wb_forwarding_value = 0   # NEW: Add WB forwarding value
         
         # For branch handling
         self.branch_target = 0
@@ -20,6 +22,7 @@ class HazardUnit:
         # Stall signals
         self.stall_pipeline = False
         self.id_reg_target = None  # Target register being written in ID stage
+        
         
     def set_id_reg_target(self, reg_name):
         """Set the target register for the ID stage"""
@@ -37,18 +40,28 @@ class HazardUnit:
             self.mem_forwarding_reg = reg_name
             self.mem_forwarding_value = value
         
+    def set_wb_reg_target(self, reg_name, value):
+        """Set the target register and value for forwarding from WB stage"""
+        if reg_name and isinstance(reg_name, str):
+            self.wb_forwarding_reg = reg_name
+            self.wb_forwarding_value = value
+        
     def _forward_value(self, reg_name, original_value):
         """Generic forwarding logic for both rs and rt"""
         if not reg_name or not isinstance(reg_name, str):
             return original_value
             
-        # Forward from MEM stage (priority over EX)
+        # Forward from MEM stage (priority over WB)
         if self.mem_forwarding_reg == reg_name:
             return self.mem_forwarding_value
             
-        # Forward from EX stage
+        # Forward from EX stage (priority over MEM)
         if self.ex_forwarding_reg == reg_name:
             return self.ex_forwarding_value
+            
+        # NEW: Forward from WB stage (lowest priority)
+        if self.wb_forwarding_reg == reg_name:
+            return self.wb_forwarding_value
             
         return original_value
         
@@ -81,19 +94,27 @@ class HazardUnit:
                         instr_data = parse_instruction(if_id_instr)
                         if instr_data:
                             operands = instr_data['operands']
+                            opcode = instr_data['opcode']
                             
                             # Check if ID stage uses this register as a source
-                            # FIX: Only check source registers (rs and rt) - not destination registers
                             for reg_field, reg_name in operands.items():
                                 if reg_field in ['rs', 'rt'] and reg_name == dest_reg:
-                                    id_ex_reg = self.id_ex_reg.write("control_signals", {"is_nop": True})
                                     return True
+                                    
+                            # For memory operations, check base register in expressions like 0($s0)
+                            if opcode in ["lw", "sw"]:
+                                mem_op = operands.get('imm(rs)', '')
+                                if mem_op:
+                                    # Check if base register matches destination
+                                    try:
+                                        base_reg = mem_op.split('(')[1].rstrip(')')
+                                        if base_reg == dest_reg:
+                                            return True
+                                    except (IndexError, ValueError):
+                                        pass
                     except (ValueError, TypeError, AttributeError):
                         pass
-                        
-                # Check if ID stage uses this register (fallback method)
-                # if dest_reg == self.id_reg_target:
-                #     return True
+        
         return False
 
     def stall_if(self):

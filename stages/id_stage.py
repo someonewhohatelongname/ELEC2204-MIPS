@@ -135,10 +135,25 @@ class IDStage:
                         rs_name = mem_op.split('(')[1].rstrip(')')
                         imm_val = int(imm_str) if imm_str else 0
                         rs_val = self.register_file.read(rs_name)
+                        
+                        # CRITICAL: Store rs_name for base register forwarding
+                        self.id_ex_reg.write("rs_name", rs_name)
                     except (IndexError, ValueError):
-                        # Invalid format, use default values
                         pass
-        
+                
+                # For sw, handle rt register (value to store)
+                if opcode == "sw" and 'rt' in operands:
+                    rt_name = operands['rt']
+                    rt_val = self.register_file.read(rt_name)
+                    self.id_ex_reg.write("rt_name", rt_name)
+                    self.id_ex_reg.write("rt_val", rt_val)
+                    dest_reg = None  # No destination register for sw
+                
+                # For lw, handle rt register (destination)
+                elif opcode == "lw" and 'rt' in operands:
+                    rt_name = operands['rt']
+                    dest_reg = rt_name
+
         # Check for hazards and update hazard unit
         if dest_reg:
             self.hazard_unit.set_id_reg_target(dest_reg)

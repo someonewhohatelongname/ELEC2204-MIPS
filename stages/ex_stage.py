@@ -24,7 +24,7 @@ class EXStage:
         rs_val = self.id_ex_reg.read("rs_val")
         rt_val = self.id_ex_reg.read("rt_val")
         imm_val = self.id_ex_reg.read("imm_val")
-        shamt_val = self.id_ex_reg.read("shamt_val")  # Get shift amount for SLL
+        shamt_val = self.id_ex_reg.read("shamt_val")
         dest_reg = self.id_ex_reg.read("dest_reg")
         pc = self.id_ex_reg.read("pc")
         instruction = self.id_ex_reg.read("instruction")
@@ -47,12 +47,14 @@ class EXStage:
                 rt_val = 0
         
         # Apply forwarding if necessary
+        # CRITICAL: Always apply forwarding to rs_val which is used for base address
         rs_val = self.hazard_unit.forward_a(rs_val)
         rt_val = self.hazard_unit.forward_b(rt_val)
         
         # Perform ALU operation
         alu_op = control_signals.get("alu_op", "ADD")
         result = self._alu_execute(alu_op, rs_val, rt_val, imm_val, shamt_val)
+
         
         # Update EX/MEM pipeline register
         self.ex_mem_reg.write("alu_result", result)

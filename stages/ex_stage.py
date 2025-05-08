@@ -24,6 +24,7 @@ class EXStage:
         rs_val = self.id_ex_reg.read("rs_val")
         rt_val = self.id_ex_reg.read("rt_val")
         imm_val = self.id_ex_reg.read("imm_val")
+        shamt_val = self.id_ex_reg.read("shamt_val")  # Get shift amount for SLL
         dest_reg = self.id_ex_reg.read("dest_reg")
         pc = self.id_ex_reg.read("pc")
         instruction = self.id_ex_reg.read("instruction")
@@ -51,7 +52,7 @@ class EXStage:
         
         # Perform ALU operation
         alu_op = control_signals.get("alu_op", "ADD")
-        result = self._alu_execute(alu_op, rs_val, rt_val, imm_val)
+        result = self._alu_execute(alu_op, rs_val, rt_val, imm_val, shamt_val)
         
         # Update EX/MEM pipeline register
         self.ex_mem_reg.write("alu_result", result)
@@ -72,7 +73,7 @@ class EXStage:
         if dest_reg and control_signals.get("reg_write", False):
             self.hazard_unit.set_ex_reg_target(dest_reg, result)
         
-    def _alu_execute(self, alu_op, rs_val, rt_val, imm_val):
+    def _alu_execute(self, alu_op, rs_val, rt_val, imm_val, shamt_val=None):
         """
         Execute the ALU operation.
         """
@@ -81,11 +82,13 @@ class EXStage:
             rs_val = int(rs_val) if rs_val is not None else 0
             rt_val = int(rt_val) if rt_val is not None else 0
             imm_val = int(imm_val) if imm_val is not None else 0
+            shamt_val = int(shamt_val) if shamt_val is not None else 0
         except (ValueError, TypeError):
             # If conversion fails, use default values
             rs_val = 0
             rt_val = 0
             imm_val = 0
+            shamt_val = 0
             
         if alu_op == "ADD":
             # For load/store, add immediate value to base register
@@ -108,5 +111,8 @@ class EXStage:
             return rs_val ^ rt_val
         elif alu_op == "NOR":
             return ~(rs_val | rt_val)
+        elif alu_op == "SLL":
+            # Shift left logical operation
+            return rt_val << shamt_val
         else:
             return 0  # Default case

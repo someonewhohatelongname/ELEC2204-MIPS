@@ -56,6 +56,7 @@ class IDStage:
         rs_val = None
         rt_val = None
         imm_val = 0
+        shamt_val = 0  # For SLL instruction
         rs_name = None
         rt_name = None
         
@@ -72,16 +73,33 @@ class IDStage:
         
         # Get source register values based on instruction type
         if instr_type == 'R':
-            # For R-type instructions, use rd as destination register
-            if 'rs' in operands:
-                rs_name = operands['rs']
-                rs_val = self.register_file.read(rs_name)
-            if 'rt' in operands:
-                rt_name = operands['rt']
-                rt_val = self.register_file.read(rt_name)
-            
-            # Destination register for writeback
-            dest_reg = operands.get('rd', None)
+            # Handle SLL instruction specifically
+            if opcode == "sll":
+                # SLL uses rt as source and rd as destination
+                if 'rt' in operands:
+                    rt_name = operands['rt']
+                    rt_val = self.register_file.read(rt_name)
+                
+                # Get shift amount
+                if 'shamt' in operands:
+                    try:
+                        shamt_val = int(operands['shamt'])
+                    except ValueError:
+                        shamt_val = 0
+                
+                # Destination register for writeback
+                dest_reg = operands.get('rd', None)
+            else:
+                # For standard R-type instructions, use rd as destination register
+                if 'rs' in operands:
+                    rs_name = operands['rs']
+                    rs_val = self.register_file.read(rs_name)
+                if 'rt' in operands:
+                    rt_name = operands['rt']
+                    rt_val = self.register_file.read(rt_name)
+                
+                # Destination register for writeback
+                dest_reg = operands.get('rd', None)
             
         elif instr_type == 'I':
             # Handle immediate instructions
@@ -130,6 +148,7 @@ class IDStage:
         self.id_ex_reg.write("rs_val", rs_val)
         self.id_ex_reg.write("rt_val", rt_val)
         self.id_ex_reg.write("imm_val", imm_val)
+        self.id_ex_reg.write("shamt_val", shamt_val)  # Add shift amount for SLL
         self.id_ex_reg.write("dest_reg", dest_reg)
         self.id_ex_reg.write("control_signals", control_signals)
         self.id_ex_reg.write("pc", pc)
@@ -155,7 +174,8 @@ class IDStage:
             "or": "OR",
             "xor": "XOR",
             "nor": "NOR",
-            "lw": "ADD",  # Address calculation
-            "sw": "ADD"   # Address calculation
+            "sll": "SLL",  # Add SLL ALU operation
+            "lw": "ADD",   # Address calculation
+            "sw": "ADD"    # Address calculation
         }
         return alu_operations.get(opcode, "ADD")

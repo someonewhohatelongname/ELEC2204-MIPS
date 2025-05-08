@@ -46,11 +46,12 @@ def instruction_to_binary(opcode, instr_type, operands):
         binary_instruction |= OPCODE_MAP['R-type'] << R_TYPE_FORMAT['opcode']['start']
         
         # Set rs, rt, rd fields
-        rs_value = get_register_number(operands['rs'])
+        if 'rs' in operands: # if false means its sll
+            rs_value = get_register_number(operands['rs'])
+            binary_instruction |= rs_value << R_TYPE_FORMAT['rs']['start']
         rt_value = get_register_number(operands['rt'])
         rd_value = get_register_number(operands['rd'])
         
-        binary_instruction |= rs_value << R_TYPE_FORMAT['rs']['start']
         binary_instruction |= rt_value << R_TYPE_FORMAT['rt']['start']
         binary_instruction |= rd_value << R_TYPE_FORMAT['rd']['start']
         

@@ -36,7 +36,6 @@ class IDStage:
             
         # Parse instruction
         try:
-            # UPDATED: Use new instruction parser return format
             instr_data = parse_instruction(instruction)
             if not instr_data:
                 self.id_ex_reg.write("control_signals", {"is_nop": True})
@@ -56,7 +55,7 @@ class IDStage:
         rs_val = None
         rt_val = None
         imm_val = 0
-        shamt_val = 0  # For SLL instruction
+        shamt_val = 0  
         rs_name = None
         rt_name = None
         
@@ -136,7 +135,7 @@ class IDStage:
                         imm_val = int(imm_str) if imm_str else 0
                         rs_val = self.register_file.read(rs_name)
                         
-                        # CRITICAL: Store rs_name for base register forwarding
+                        # Store rs_name for base register forwarding
                         self.id_ex_reg.write("rs_name", rs_name)
                     except (IndexError, ValueError):
                         pass
@@ -174,7 +173,7 @@ class IDStage:
         if rt_name:
             self.id_ex_reg.write("rt_name", rt_name)
             
-        # NEW: Store binary representation
+        # Store binary representation
         self.id_ex_reg.write("binary_data", binary_data)
     
     def _get_alu_op(self, opcode):
@@ -189,8 +188,8 @@ class IDStage:
             "or": "OR",
             "xor": "XOR",
             "nor": "NOR",
-            "sll": "SLL",  # Add SLL ALU operation
-            "lw": "ADD",   # Address calculation
-            "sw": "ADD"    # Address calculation
+            "sll": "SLL",  
+            "lw": "ADD",   
+            "sw": "ADD"    
         }
         return alu_operations.get(opcode, "ADD")

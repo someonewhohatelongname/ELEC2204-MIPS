@@ -91,9 +91,7 @@ def instruction_to_binary(opcode, instr_type, operands):
             # Ensure immediate is only 16 bits (handle sign extension)
             imm_value = imm_value & 0xFFFF
             binary_instruction |= imm_value
-    
-    # J-type not implemented yet since not in the instruction set
-    
+        
     return binary_instruction
 
 def format_instruction_fields(binary_instr, instr_type):
@@ -149,9 +147,7 @@ def format_instruction_fields(binary_instr, instr_type):
             },
             'immediate': imm_signed
         }
-    
-    # J-type not implemented yet
-    
+        
     return {'binary': format_binary(binary_instr)}
 
 def parse_instruction(instruction):

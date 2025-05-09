@@ -1,0 +1,19 @@
+
+===== Summary (7 cycles) =====
+
+Final Register State:
+  $t0: 5
+  $8: 5
+  $t1: 10
+  $9: 10
+  $t2: 15
+  $10: 15
+  $sp: 16383
+  $29: 16383
+
+Final Memory State:
+  TEXT SEGMENT:
+    TEXT[0x0]: addi $t0, $zero, 5
+    TEXT[0x4]: addi $t1, $zero, 10
+    TEXT[0x8]: add $t2, $t0, $t1
+==============================

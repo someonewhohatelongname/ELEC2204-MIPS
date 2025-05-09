@@ -92,7 +92,8 @@ class Logger:
         if text_segment:
             self._log("  TEXT SEGMENT:")
             for addr, value in text_segment.items():
-                self._log(f"    {addr}: {value}")
+                # self._log(f"    {addr}: {value}")
+                pass # Commented out to avoid printing text segment values too much in the --verbose mode causing difficulty in reading log
         
         if static_segment:
             self._log("  STATIC SEGMENT:")

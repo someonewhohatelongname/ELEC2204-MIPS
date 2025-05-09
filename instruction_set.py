@@ -35,7 +35,7 @@ FUNCTION_MAP = {
     'or': 0b100101,
     'xor': 0b100110,
     'nor': 0b100111,
-    'sll': 0b000000  # Adding SLL function code
+    'sll': 0b000000 
 }
 
 # Register mappings
@@ -64,5 +64,5 @@ INSTRUCTION_SET = {
     "nor": {'type': 'R', 'format': ['rd', 'rs', 'rt']},
     "lw": {'type': 'I', 'format': ['rt', 'imm(rs)']},
     "sw": {'type': 'I', 'format': ['rt', 'imm(rs)']},
-    "sll": {'type': 'R', 'format': ['rd', 'rt', 'shamt']}  # Adding SLL instruction with its format
+    "sll": {'type': 'R', 'format': ['rd', 'rt', 'shamt']}  
 }

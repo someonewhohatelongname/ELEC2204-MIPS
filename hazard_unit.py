@@ -12,8 +12,8 @@ class HazardUnit:
         self.ex_forwarding_value = 0
         self.mem_forwarding_reg = None
         self.mem_forwarding_value = 0
-        self.wb_forwarding_reg = None  # NEW: Add WB forwarding register
-        self.wb_forwarding_value = 0   # NEW: Add WB forwarding value
+        self.wb_forwarding_reg = None  # Add WB forwarding register
+        self.wb_forwarding_value = 0   # Add WB forwarding value
         
         # For branch handling
         self.branch_target = 0
@@ -59,7 +59,7 @@ class HazardUnit:
         if self.ex_forwarding_reg == reg_name:
             return self.ex_forwarding_value
             
-        # NEW: Forward from WB stage (lowest priority)
+        # Forward from WB stage (lowest priority)
         if self.wb_forwarding_reg == reg_name:
             return self.wb_forwarding_value
             

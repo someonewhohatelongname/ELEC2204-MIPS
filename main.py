@@ -19,7 +19,6 @@ def load_assembly_program(file_path):
     
     with open(file_path, 'r') as f:
         for line in f:
-            # Remove comments and strip whitespace
             line = line.split('#')[0].strip()
             if line:
                 # Store at current address
@@ -29,8 +28,6 @@ def load_assembly_program(file_path):
                 # Check if we've exceeded text segment
                 if address > Memory.TEXT_END:
                     print(f"Warning: Program exceeds text segment limit at {hex(address)}")
-                    # We could either wrap around or truncate here
-                    # For safety, we'll truncate
                     break
                 
     return program
@@ -52,7 +49,7 @@ def parse_initial_data(file_path, segment_type="static"):
     if segment_type == "static":
         segment_start = Memory.STATIC_START
         segment_end = Memory.STATIC_END
-    elif segment_type == "heap":  # Changed from "dynamic" to "heap" for consistency
+    elif segment_type == "heap":  
         segment_start = Memory.DYNAMIC_START
         segment_end = Memory.DYNAMIC_END
     elif segment_type == "stack":
@@ -102,10 +99,10 @@ def main():
     parser = argparse.ArgumentParser(description='MIPS Pipeline Simulator')
     parser.add_argument('program', help='Path to the MIPS assembly program file')
     parser.add_argument('--static-data', help='Path to the static data segment initialization file')
-    parser.add_argument('--heap-data', help='Path to the heap (dynamic) data segment initialization file')  # Changed from dynamic-data to heap-data
+    parser.add_argument('--heap-data', help='Path to the heap (dynamic) data segment initialization file') 
     parser.add_argument('--stack-data', help='Path to the stack segment initialization file')
     parser.add_argument('--stack-pointer', type=int, help='Initial stack pointer value (defaults to top of stack)')
-    parser.add_argument('--cycles', type=int, default=1000, help='Maximum number of cycles to simulate')
+    parser.add_argument('--cycles', type=int, default=10000, help='Maximum number of cycles to simulate')
     parser.add_argument('--verbose', action='store_true', help='Print detailed cycle-by-cycle logs')
     
     args = parser.parse_args()
@@ -126,13 +123,13 @@ def main():
             print(f"Error: Static data file not found: {args.static_data}")
             return
     
-    # Load heap data if provided (renamed from dynamic_data)
+    # Load heap data if provided 
     heap_data = []
-    if args.heap_data:  # Changed from args.dynamic_data
+    if args.heap_data:  
         try:
-            heap_data = parse_initial_data(args.heap_data, "heap")  # Changed from "dynamic" to "heap"
+            heap_data = parse_initial_data(args.heap_data, "heap") 
         except FileNotFoundError:
-            print(f"Error: Heap data file not found: {args.heap_data}")  # Changed error message
+            print(f"Error: Heap data file not found: {args.heap_data}")  
             return
     
     # Load stack data if provided
@@ -145,7 +142,7 @@ def main():
             return
     
     # Combine all data
-    all_data = static_data + heap_data + stack_data  # Changed from dynamic_data to heap_data
+    all_data = static_data + heap_data + stack_data  
     
     # Create and run simulator
     simulator = Simulator(program, all_data, args.cycles, args.stack_pointer)
